@@ -1,0 +1,1 @@
+solved by typing "nc jupiter.challenges.picoctf.org 64287" on cmd
