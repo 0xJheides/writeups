@@ -26,7 +26,7 @@ I tried to login using the anonymous as username and password and we failed to l
 
 ![apache](4.png)
 
-I enter the ip address on firefox and a wep app opened i searched everywhere in this website until i found some intersting vulnerabilty
+I enter the ip address on firefox and a wep app opened, i searched everywhere in this website until i found some interesting vulnerabilty
 
 
 ![local file intrusion](5.png)
@@ -35,12 +35,12 @@ A local file intrusion(LFI) vulnerabilty
 
 ![ls command](6.png)
 
-Played with the parameters by using the unix command line commands such as the ls, now that i found some intersting files, time to read them
+Played with the parameters by using the unix command line commands such as the ls, now that i found some interesting files, time to read them
 
 ![cat](7.png)
 ![config.php](8.png)
 
-cat command is not working here, so i googled how to cat in a url and i found that you can cat but in base64
+cat command is not working here, so i google how to cat in a url and i found that you can cat but in base64
 
 ![base64](9.png)
 ```
