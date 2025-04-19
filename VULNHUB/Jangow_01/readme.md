@@ -1,97 +1,165 @@
-## 🧾 Daily CTF Writeup – [Jangow-01](https://www.vulnhub.com/entry/jangow-101,754/)
+# 🧾 Daily CTF Writeup – [Jangow-01](https://www.vulnhub.com/entry/jangow-101,754/)
 
-**Date:** `[2025-04-19]`  
-**Difficulty:** `[Easy]`  
-**OS:** `[Linux]`
+**Date:** `2025-04-19`  
+**Difficulty:** `Easy`    
+**OS:** `Linux`   
+**Hecker:** `Jerome Infante`
 
 
 ---
 
+## 💻 Target Setup
 
-
-This is the virtualbox that we are going to attack
+This is the VirtualBox machine we’re targeting:
 
 ![jangow 01 vbox](1.png)
 
+---
 
-**Nmap Results:**  
+## 🔎 Reconnaissance
+
+**Nmap Scan Results:**
 
 ![nmap result](2.png)
 
-Now the open ports are ftp and apache
+The scan shows that FTP and Apache are running.
+
+---
+
+## 📂 FTP Enumeration
 
 ![ftp login](3.png)
 
-I tried to login using the anonymous as username and password and we failed to login
+Tried logging into FTP using `anonymous` credentials — access was denied.
+
+---
+
+## 🌐 Web Enumeration
+
+Navigated to the target IP in Firefox. A web application loaded.
 
 ![apache](4.png)
 
-I enter the ip address on firefox and a wep app opened, i searched everywhere in this website until i found some interesting vulnerabilty
+After browsing through the site, I discovered a vulnerability.
 
+---
+
+## 🛠️ Exploitation – LFI Discovery
 
 ![local file intrusion](5.png)
 
-A local file intrusion(LFI) vulnerabilty
+Found a **Local File Inclusion (LFI)** vulnerability.
+
+Started playing around with parameters using Linux commands like `ls`.
 
 ![ls command](6.png)
 
-Played with the parameters by using the unix command line commands such as the ls, now that i found some interesting files, time to read them
+Located some interesting files. Time to read them.
 
-![cat](7.png)
+---
+
+## 📜 Reading Sensitive Files (Base64 Trick)
+
+Tried using the `cat` command via URL but it didn’t work directly.
+
+![cat](7.png)  
 ![config.php](8.png)
 
-cat command is not working here, so i google how to cat in a url and i found that you can cat but in base64
+Googled for workarounds and found you can output files using `base64` encoding.
 
 ![base64](9.png)
-```
-PD9waHAKJHNlcnZlcm5hbWUgPSAibG9jYWxob3N0IjsKJGRhdGFiYXNlID0gImRlc2FmaW8wMiI7 CiR1c2VybmFtZSA9ICJkZXNhZmlvMDIiOwokcGFzc3dvcmQgPSAiYWJ5Z3VybDY5IjsKLy8gQ3Jl YXRlIGNvbm5lY3Rpb24KJGNvbm4gPSBteXNxbGlfY29ubmVjdCgkc2VydmVybmFtZSwgJHVzZXJu YW1lLCAkcGFzc3dvcmQsICRkYXRhYmFzZSk7Ci8vIENoZWNrIGNvbm5lY3Rpb24KaWYgKCEkY29u bikgewogICAgZGllKCJDb25uZWN0aW9uIGZhaWxlZDogIiAuIG15c3FsaV9jb25uZWN0X2Vycm9y KCkpOwp9CmVjaG8gIkNvbm5lY3RlZCBzdWNjZXNzZnVsbHkiOwpteXNxbGlfY2xvc2UoJGNvbm4p Owo/Pgo= 
-```
+
+Decoded the base64 using **Burp Suite**:
 
 ![using burp](10.png)
 
-Using the burpsuite tool i decoded the base64 and it is a credentials
+**Credentials recovered:**
+
+***Username***: desafio02
+
+***Password***: abygurl69
+
+
+---
+
+## 🔐 Login Attempt (Failed)
 
 ![attempt to login](11.png)
 
-I used the credentials to login, but i failed to login, time to search some files again 
+Tried logging in with the credentials — failed.
+
+Back to searching for more files…
+
+---
+
+## 📁 Hidden Backup File Found
 
 ![another file](12.png)
 
-There's a backup file and it's hidden
+Discovered a hidden backup file — also in base64.
 
 ![base 64 cat](13.png)
 
-Another base 64 again
+Decoded it and got another set of credentials.
 
 ![got it](14.png)
 
-Different username, let's try to login
+---
+
+## ✅ Successful Login
 
 ![i'm in](15.png)
 
-I'm in!
+Used the new credentials and successfully logged in.
+
+---
+
+## 📈 Privilege Escalation
+
+Now that we’re in, the next step is rooting the box.
 
 ![let's find](16.png)
 
-now we are inside, time to get root now that we see the linux version, let's find CVE 
+Checked the Linux version and looked for a suitable CVE.
 
-We got the cve 
-[CVE:2017-6074](https://www.exploit-db.com/exploits/41458)
+Found one: [CVE-2017-6074](https://www.exploit-db.com/exploits/41458)
 
-Now let's copy the code and write a new file named exploit.c
+---
+
+## 🧨 Local Exploit
+
+Copied the exploit code into a new file: `exploit.c`
 
 ![exploit](18.png)
 
-Next, we transfer the exploit to the machine by using the PUT
+Uploaded it to the target using **PUT**.
 
 ![exploit.c](19.png)
 
-login on the machine using the credentials we got, now that we can see the file we just transfered i compiled the code and run the executable file and now we are now the root user
+Logged into the machine, compiled the exploit, and executed it.
+
+Boom — **root access** achieved.
+
+---
+
+## 🏁 Capture the Flag
 
 ![login](20.png)
 
-after exploiting, look for the root folder where the flag is
+Navigated to the `/root` directory.
 
 ![flag captured](21.png)
 
-# HAPPY HACKING!
+**Flag captured! Mission complete.**
+
+---
+
+## 🎉 Final Notes
+
+- Solid practice on LFI exploitation and base64 tricks.  
+- Always check for hidden/backup files.  
+- CVE-based privilege escalation was smooth with the right kernel version.
+
+---
+
+# 🔚 HAPPY HACKING!
