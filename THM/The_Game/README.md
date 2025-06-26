@@ -4,6 +4,7 @@
 - **Difficulty:** Easy
 - **OS:** Linux
 - **Hecker:** Jerome Infante
+- **Co-Hecker:** Nathaniel Angeles
 
 ---
 
